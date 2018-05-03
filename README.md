@@ -17,3 +17,8 @@ Exercises from parallel processing class
 
 ### Uebung5
 * BlockingQueue
+
+### Uebung6
+* calculate pi using Monte Carlo Calculation
+* with single stream and parallel streams
+* with parallel streams the calculation time is around 1/2
