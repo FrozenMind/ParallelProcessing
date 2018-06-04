@@ -1,4 +1,5 @@
 
+//basic threading
 public class Uebung1 {
 
 	static double sumsum;

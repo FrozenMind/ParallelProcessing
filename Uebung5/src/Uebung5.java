@@ -1,6 +1,6 @@
 import java.util.concurrent.*;
 
-//usage of BlockingQueue with multiple threds
+//usage of BlockingQueue with multiple threads
 //producers create new values to put into blockingqueue
 //consumer take values from queue and summand them
 public class Uebung5 {
