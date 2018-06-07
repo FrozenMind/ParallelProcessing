@@ -1,20 +1,20 @@
 
 public class Matrix {
 
-	int n, m;
+	int rows, columns;
 	double[][] matrix;
 
-	// n = rows, m = columns
+	// creates an zero matrix n x m
 	public Matrix(int n, int m) {
-		this.n = n;
-		this.m = m;
+		this.rows = n;
+		this.columns = m;
 		this.matrix = zeroMatrix(n, m);
 	}
 
 	public Matrix(double[][] mat) {
 		this.matrix = mat;
-		this.n = mat.length;
-		this.m = mat[0].length;
+		this.rows = mat.length;
+		this.columns = mat[0].length;
 	}
 
 	// creates a zero matrix
@@ -55,9 +55,9 @@ public class Matrix {
 	
 	//transponse matrix
 	public Matrix transponseMatrix(){
-		double[][] mat = new double[this.m][this.n];
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < m; j++) {
+		double[][] mat = new double[this.columns][this.rows];
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.columns; j++) {
 				mat[j][i] = this.matrix[i][j];
 			}
 		}
@@ -86,15 +86,15 @@ public class Matrix {
 			return false;
 		}
 
-		double Bn = ((Matrix) B).n;
-		double Bm = ((Matrix) B).m;
-		if (this.n != Bn || this.m != Bm)
+		double Bn = ((Matrix) B).rows;
+		double Bm = ((Matrix) B).columns;
+		if (this.rows != Bn || this.columns != Bm)
 			return false;
 
 		double[][] Bmatrix = ((Matrix) B).matrix;
 
-		for (int i = 0; i < this.n; i++) {
-			for (int j = 0; j < this.m; j++) {
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.columns; j++) {
 				if (this.matrix[i][j] != Bmatrix[i][j])
 					return false;
 			}
@@ -105,8 +105,8 @@ public class Matrix {
 	// log matrix
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < this.n; i++) {
-			for (int j = 0; j < this.m; j++) {
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.columns; j++) {
 				sb.append(this.matrix[i][j] + "\t");
 			}
 			sb.append("\n");

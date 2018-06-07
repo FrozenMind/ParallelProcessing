@@ -3,12 +3,10 @@ public class ParallelMatrix extends Matrix {
 
 	public ParallelMatrix(int n, int m) {
 		super(n, m);
-
 	}
 
 	public ParallelMatrix(double[][] mat) {
 		super(mat);
-
 	}
 
 	@Override
