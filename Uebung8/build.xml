@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!-- $Id: $ -->
+
+
+<project name="dhbw-pv" basedir="." >
+
+  <property name="src"       value="src" />
+  <property name="bin"       value="bin" />
+  <property name="build"     value="bin" />
+  <property name="doc"       value="doc" />
+  <property name="test"      value="test" />
+  <property name="jar"       value="pv-2018" />
+
+  <!--property name="libs"      value="${basedir}/../java/lib" /-->
+  <property name="libs"      value="lib" />
+  <property name="log4j"     value="${libs}/log4j.jar" />
+  <!--property name="log4j"     value="${libs}/mylog.jar" /-->
+  <property name="junit"     value="${libs}/junit.jar" />
+  <property name="jomp"      value="${libs}/jomp1.0b.jar" />
+  <property name="mpj"       value="${libs}/mpj.jar" />
+  <property name="jython"    value="${libs}/jython.jar" />
+  <property name="lint"      value="${libs}/lint4j.jar" />
+  <property name="l4j.level" value="3" />
+  <property name="l4j.exact" value="true" />
+
+  <!--property name="cp"       value="${log4j}:${junit}:${tnj}:." /-->
+  <property name="cp"       value="${log4j}:${jomp}:${mpj}:${junit}:${bin}:." />
+  <property name="doccp"    value="${log4j}:${junit}:${bin}" />
+  <property name="version"  value="0.1" />
+
+
+<target name="recompile" depends="distclean" >
+  <javac srcdir="${src}" destdir="${build}"
+         debug="on" debuglevel="lines,source"
+         classpath="${cp}" 
+         includeantruntime="false"
+  />
+</target>
+
+<target name="compile" >
+  <javac srcdir="${src}" destdir="${build}" 
+         debug="on" debuglevel="lines,source"
+         classpath="${cp}"
+         listfiles="true"
+         includeantruntime="false"
+  >
+  <compilerarg value="-Xlint:unchecked" />
+  </javac>
+<!--     listfiles="true"
+         includes="**/*.java" 
+-->
+</target>
+
+<target name="run" depends="compile" >
+  <java  classname="${class}" 
+         classpath="${cp}" 
+         fork="yes" >
+  <arg value="${args}" />
+  </java>
+</target>
+
+
+<target name="mpjrun" depends="compile" >
+  <!--ignored: classpath="${cp}" -->
+  <java  jar="/hdd/Coding/JavaLibs/mpj-v0_44/lib/starter.jar" 
+         dir="${bin}"
+         fork="true" >
+         <env key="MPJ_HOME" path="/hdd/Coding/JavaLibs/mpj-v0_44" />
+     <arg line="-np ${np} ${class}" /> 
+  </java>
+</target>
+
+
+<target name="jomp" depends="compile" >
+  <java  classname="${class}" 
+         classpath="${cp}" 
+         fork="yes" >
+    <jvmarg value="-Djomp.threads=${jomp.threads}" /> 
+    <jvmarg value="-server"/>
+    <jvmarg value="-verbose:gc"/>
+    <jvmarg value="-Xmx2900M"/>
+    <jvmarg value="-Xms2900M"/>
+  </java>
+</target>
+
+<target name="jompc" >
+  <java  classname="jomp.compiler.Jomp" 
+         classpath="${cp}" 
+         fork="yes" >
+     <arg line="${src}/${file}" /> 
+  </java>
+</target>
+
+
+<target name="doc" >
+  <javadoc destdir="${doc}" 
+           classpath="${doccp}" 
+           overview="overview.html" 
+           author="true" 
+           linksource="true" 
+           >
+<!--       
+           private="true" 
+           linksource="true" 
+-->
+     <tag name="todo"      description="To do"            scope="all" />
+     <tag name="fix"       description="Fix me"           scope="all" />
+     <tag name="usage"     description="Usage"            scope="all" />
+     <fileset dir="${src}" includes="**/*.java"  />
+  </javadoc>
+</target>
+
+<target name="lint" >
+  <lint4j sourcepath="${src}" 
+          classpath="${cp}:${jar}"
+          packages="edu.jas.*" 
+          level="${l4j.level}" 
+          exact="${l4j.exact}" >
+  </lint4j>
+</target>
+
+<target name="jar" >
+  <jar jarfile="../../${jar}.jar"  >
+     <fileset dir="." includes="**/*.java"  />
+     <fileset dir="." includes="**/*.html"  />
+     <fileset dir="." includes="build.xml"  />
+     <fileset dir="." includes="lib/*.jar"  />
+  </jar>
+  <jar jarfile="../../${jar}.zip"  >
+     <fileset dir="." includes="**/*.java"  />
+     <fileset dir="." includes="**/*.html"  />
+     <fileset dir="." includes="build.xml"  />
+     <fileset dir="." includes="lib/*.jar"  />
+  </jar>
+</target>
+<!--
+     <fileset dir="edu/jas" />
+-->
+
+<target name="clean" >
+  <delete verbose="true" >
+    <fileset dir="${src}" defaultexcludes="no" includes="**/*~"  />
+  </delete>
+</target>
+
+<target name="distclean" depends="clean" >
+  <delete verbose="true" >
+    <fileset dir="${src}" includes="**/*.class"  />
+    <fileset dir="${build}" includes="**/*.class"  />
+  </delete>
+</target>
+
+<target name="untabify" >
+  <fixcrlf srcdir="${src}"
+       tab="remove"
+       tablength="8"
+       javafiles="yes"
+       includes="**/*.java"
+  />
+</target>
+
+</project>

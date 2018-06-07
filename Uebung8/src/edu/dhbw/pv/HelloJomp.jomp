@@ -1,0 +1,41 @@
+//hello world with JOMP (java open mp)
+
+package edu.dhbw.pv;
+
+import jomp.runtime.*;
+
+public class HelloJomp {
+  public static void main(String[] args) {
+    
+    //print thread number of each thread
+    //
+    //omp parallel
+    {
+      int myID = OMP.getThreadNum();
+      System.out.println("Hello from thread " + myID);
+    }
+ 
+    //now lets do some calculation
+    int count = 100000000;
+    int i;
+    int[] numbers = new int[count];
+
+    //init numbers array
+    for(i = 0; i < count; i++) {
+      numbers[i] = i*i;
+    }
+
+    long sum = 0;
+    double start = System.currentTimeMillis();
+    //build quadrant of each value and summand them
+    //reduction(operation:variable)
+    //
+    //omp parallel for reduction(+:sum)
+    for(i = 0; i < count; i++) {
+      sum += numbers[i] * numbers[i];
+    }
+    double end = System.currentTimeMillis();
+    System.out.println("Sum is = " + sum + " in " + (end - start) + "ms");
+  }
+
+}
