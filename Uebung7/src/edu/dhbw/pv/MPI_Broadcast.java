@@ -2,11 +2,13 @@
 //process 0 is the boss who sends an array to others
 //others get it, build the quadrant of all values and send back to 0
 //process 0 builds the sum
+//with usage of broadcast
+//bcast & reduce is way easier to use for small problems
 package edu.dhbw.pv;
 
 import mpi.MPI;
 
-public class Uebung7 {
+public class MPI_Broadcast {
   public static void main(String [] args ){
     //MPI.Init needs to be first thing to call in an MPI process
     MPI.Init(args);
@@ -20,22 +22,16 @@ public class Uebung7 {
     int count = 100;
     int[] numbers = new int[count];
 
-    //the one with id 0 is the boss, who sends the field
+    //the one with id 0 is the boss, who creates & sends the field
     if(myID == 0){
       for(int i = 0; i < count; i++){
         numbers[i] = i;
       }
-      for(int i = 1; i < size; i ++){
-        //Send(files, start indes, size, datatype, receiver, msg tag)
-        //msg tag = just a number, for now no real usage
-        MPI.COMM_WORLD.Send(numbers, 0, count, MPI.INT, i, 99);
-      }
-      System.out.println("Send all fields");
-    } else { //other processe are the receiver
-      //field, startoffset, size, datatype, sender, msg tag
-      MPI.COMM_WORLD.Recv(numbers, 0, count, MPI.INT, 0, 99);
-      System.out.println("Received field from " + myID);
-    }
+   }
+   //broadcasat runs on every node
+   //bcast is send and receive in one
+   MPI.COMM_WORLD.Bcast(numbers, 0, count, MPI.INT, 0);
+   System.out.println("all fields send/recv " + myID);
 
     //build quadrant of all numbers & at quadrant of own id
     //crazzy calculation, but whatever, just do sth
@@ -44,24 +40,19 @@ public class Uebung7 {
     for(int i = 0; i < numbers.length; i++){
       quadrant += numbers[i]*numbers[i] + myID*myID;
     }
+    //result is set to numbers[0], cause we can only send arrays for now
+    numbers[0] = quadrant;
     System.out.println("Quadrant of " + myID + " is " + quadrant);
-
     //send quadrants back to process with id 0
+    int numRecv[] = new int[1];
+    //reduce is run on every node again
+    //items are send and automatically summed
+    MPI.COMM_WORLD.Reduce(numbers, 0, numRecv, 0, 1, MPI.INT, MPI.SUM, 0);
+    //only id one, receives them and sum it
     if(myID == 0){
-      //add my own quadrant to sum
-      int sum = quadrant;
-      for(int i = 1; i < size; i++){
-        //process 0 receives a field with size 1
-        MPI.COMM_WORLD.Recv(numbers, 0, 1, MPI.INT, i, 99);
-        sum += numbers[i];
-      } 
-      System.out.println("Total sum is " + sum);
-    } else {
-      numbers[0] = quadrant;
-      //only send the first number to process with id 0
-      MPI.COMM_WORLD.Send(numbers, 0, 1, MPI.INT, 0, 99);    
-    }
-
+      System.out.println("Total sum is: " + numRecv[0]);
+    } 
+    
     //last thing to call in an MPI process
     MPI.Finalize();
   }

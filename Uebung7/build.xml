@@ -63,10 +63,10 @@
 
 <target name="mpjrun" depends="compile" >
   <!--ignored: classpath="${cp}" -->
-  <java  jar="${libs}/starter.jar" 
+  <java  jar="/hdd/Coding/JavaLibs/mpj-v0_44/lib/starter.jar" 
          dir="${bin}"
          fork="true" >
-         <env key="MPJ_HOME" path="/hdd/Coding/JavaLibs/mpj-v0_36" />
+         <env key="MPJ_HOME" path="/hdd/Coding/JavaLibs/mpj-v0_44" />
      <arg line="-np ${np} ${class}" /> 
   </java>
 </target>
